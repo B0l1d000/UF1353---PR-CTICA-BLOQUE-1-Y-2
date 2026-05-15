@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica Simulada — ClínicaVida · UF1353</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #10b981;
+            --blue: #3b82f6;
+            --orange: #f59e0b;
+            --purple: #8b5cf6;
+            --red: #ef4444;
+            --dark: #0f172a;
+            --dark2: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+        @media print {
+            body { background: white; font-size: 12px; }
+            .no-print { display: none !important; }
+            .page-break { page-break-before: always; }
+            .hero { padding: 40px 30px !important; }
+            section { padding: 20px !important; }
+        }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, #1a365d 50%, #2d3748 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 70%, rgba(59,130,246,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(139,92,246,0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 10px); }
+        }
+        .hero * { position: relative; z-index: 1; }
+        .hero .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 6px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        .hero h1 .accent { color: var(--green); }
+        .hero .subtitle {
+            font-size: 1.15rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 600px;
+            margin: 0 auto 30px;
+            font-weight: 400;
+        }
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .hero-meta .item {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+        }
+        .hero-meta .item strong { color: var(--green); }
+
+        /* ── LAYOUT ── */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        section h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        section h2 .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--dark2);
+        }
+
+        /* ── SCENARIO BOX ── */
+        .scenario {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 5px solid var(--orange);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin: 24px 0;
+            font-size: 15px;
+        }
+        .scenario .label {
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+        .scenario p { color: #78350f; }
+
+        /* ── INFO BOX ── */
+        .info-box {
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .info-box.tip { background: #ecfdf5; border-left: 4px solid var(--green); color: #065f46; }
+        .info-box.warn { background: #fef3c7; border-left: 4px solid var(--orange); color: #92400e; }
+        .info-box.important { background: #ede9fe; border-left: 4px solid var(--purple); color: #5b21b6; }
+        .info-box .label { font-weight: 700; margin-bottom: 4px; }
+
+        /* ── TABLE ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        th {
+            background: var(--dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        th:first-child { border-radius: 8px 0 0 0; }
+        th:last-child { border-radius: 0 8px 0 0; }
+        td {
+            padding: 11px 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tr:nth-child(even) td { background: #f8fafc; }
+        tr:hover td { background: #eef2ff; }
+
+        /* ── STATION CARDS ── */
+        .stations-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .station-card {
+            border-radius: 14px;
+            padding: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .station-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 0 0 0 100%;
+        }
+        .station-card .num {
+            font-size: 3rem;
+            font-weight: 900;
+            opacity: 0.2;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .station-card h3 {
+            color: white;
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+        .station-card p {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        .station-card.s1 { background: linear-gradient(135deg, #059669, #10b981); }
+        .station-card.s2 { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .station-card.s3 { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .station-card.s4 { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+
+        /* ── TIMELINE ── */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--green), var(--blue), var(--orange), var(--purple));
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--light);
+            border-radius: 10px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 20px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--blue);
+        }
+        .timeline-item .time {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--blue);
+        }
+        .timeline-item .title {
+            font-weight: 700;
+            font-size: 15px;
+            margin: 4px 0 2px;
+        }
+        .timeline-item .desc {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        /* ── DELIVERABLE BOX ── */
+        .deliverable {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+        .deliverable .label {
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #065f46;
+            margin-bottom: 8px;
+        }
+        .deliverable ul {
+            list-style: none;
+            padding: 0;
+        }
+        .deliverable li {
+            padding: 4px 0;
+            font-size: 14px;
+            color: #065f46;
+        }
+        .deliverable li::before {
+            content: '📄 ';
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+            font-size: 13px;
+        }
+        footer a { color: var(--blue); text-decoration: none; }
+
+        ul, ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        li { margin: 6px 0; }
+
+        @media (max-width: 700px) {
+            .stations-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+            .hero-meta { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════════════════════════ HERO ════════════════════════ -->
+<div class="hero">
+    <div class="badge">UF1353 · Ciberseguridad</div>
+    <h1>Práctica Simulada:<br><span class="accent">ClínicaVida</span></h1>
+    <p class="subtitle">Tu primer día como técnico de seguridad informática en una clínica dental real. ¿Estás preparado?</p>
+    <div class="hero-meta">
+        <div class="item">⏱ <strong>4 horas</strong></div>
+        <div class="item">👥 <strong>3 equipos</strong> × 4 alumnos</div>
+        <div class="item">🖥️ <strong>100% en PC</strong></div>
+        <div class="item">🔄 <strong>4 estaciones</strong> rotativas</div>
+    </div>
+</div>
+
+<!-- ════════════════════════ CONTENIDO ════════════════════════ -->
+<div class="container">
+
+    <!-- ESCENARIO -->
+    <section>
+        <h2><span class="icon" style="background:#fef3c7;color:#d97706;">🏥</span> El Escenario</h2>
+
+        <div class="scenario">
+            <div class="label">📋 Situación inicial</div>
+            <p><strong>ClínicaVida</strong> es una clínica dental con 20 empleados en el centro de la ciudad. Tiene 3 consultas, una recepción, un despacho de administración y una pequeña sala de servidores. Gestionan <strong>historiales clínicos de más de 8.000 pacientes</strong>, radiografías digitales, datos de facturación y citas online.</p>
+        </div>
+
+        <p>El gerente de ClínicaVida ha descubierto que la clínica tiene <strong>graves problemas de seguridad informática</strong>: contraseñas débiles, sin firewall configurado, una sola red WiFi para empleados y pacientes, y nunca han hecho una auditoría de seguridad.</p>
+
+        <p>Os ha contratado como <strong>equipo de técnicos de seguridad</strong> para auditar la clínica, detectar los problemas y proponer soluciones. Hoy es vuestro <strong>primer día de trabajo</strong>.</p>
+
+        <div class="info-box important">
+            <div class="label">💡 ¿Qué tiene ClínicaVida?</div>
+            <ul>
+                <li><strong>1 servidor principal</strong> con los historiales clínicos y software de gestión dental</li>
+                <li><strong>5 PCs</strong>: 1 en recepción, 3 en consultas, 1 en administración</li>
+                <li><strong>1 servidor de correo</strong> interno</li>
+                <li><strong>1 router WiFi</strong> (misma red para empleados y pacientes)</li>
+                <li><strong>1 impresora multifunción</strong> en red</li>
+                <li><strong>2 tablets</strong> para mostrar presupuestos a pacientes</li>
+                <li><strong>1 NAS</strong> con copias de seguridad (no cifradas)</li>
+                <li><strong>20 empleados</strong>: 4 dentistas, 3 higienistas, 2 recepcionistas, 1 administrativa, 1 gerente, 9 auxiliares</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ESTACIONES -->
+    <section>
+        <h2><span class="icon" style="background:#eef2ff;color:var(--blue);">🔄</span> Las 4 Estaciones</h2>
+        <p>Vais a pasar por <strong>4 estaciones</strong>. En cada una tendréis <strong>45 minutos</strong>. Al terminar, rotáis a la siguiente. En cada estación debéis generar un <strong>documento Word</strong> con vuestras respuestas, tablas, capturas de pantalla y explicaciones.</p>
+
+        <div class="stations-grid">
+            <div class="station-card s1">
+                <div class="num">1</div>
+                <h3>🟢 Inventario de Activos</h3>
+                <p>Identificar y clasificar todo lo que hay que proteger en la clínica. Aplicar la Triada CIA.</p>
+            </div>
+            <div class="station-card s2">
+                <div class="num">2</div>
+                <h3>🔵 Auditoría de Contraseñas</h3>
+                <p>Evaluar las contraseñas de los empleados, diseñar una política y asignar roles de acceso.</p>
+            </div>
+            <div class="station-card s3">
+                <div class="num">3</div>
+                <h3>🟠 Monta tu Firewall</h3>
+                <p>Diseñar la arquitectura de red con DMZ y configurar reglas de firewall por puertos.</p>
+            </div>
+            <div class="station-card s4">
+                <div class="num">4</div>
+                <h3>🟣 Simulacro de Ataque</h3>
+                <p>Diagnosticar un incidente de seguridad real y proponer un plan de respuesta.</p>
+            </div>
+        </div>
+
+        <div class="info-box tip">
+            <div class="label">📝 Formato de entrega</div>
+            <p>Cada equipo entrega <strong>4 documentos Word</strong> (uno por estación) con el nombre: <code>Estacion[N]_Equipo[X].docx</code>. Ejemplo: <code>Estacion1_EquipoA.docx</code>. Cada documento debe incluir: <strong>nombre de los miembros del equipo, fecha, capturas de pantalla explicadas y todas las tablas completadas</strong>.</p>
+        </div>
+    </section>
+
+    <!-- HORARIO -->
+    <section>
+        <h2><span class="icon" style="background:#f0fdf4;color:var(--green);">🕐</span> Horario de la Jornada</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="time">09:00 – 09:15</div>
+                <div class="title">🎤 Bienvenida y contexto</div>
+                <div class="desc">El formador presenta ClínicaVida, forma los equipos y explica la dinámica de estaciones.</div>
+            </div>
+            <div class="timeline-item" style="border-left: 3px solid var(--green);">
+                <div class="time" style="color:var(--green);">09:15 – 10:00</div>
+                <div class="title">🟢 Rotación 1</div>
+                <div class="desc">Cada equipo trabaja en su primera estación asignada (45 min).</div>
+            </div>
+            <div class="timeline-item" style="border-left: 3px solid var(--blue);">
+                <div class="time" style="color:var(--blue);">10:00 – 10:45</div>
+                <div class="title">🔵 Rotación 2</div>
+                <div class="desc">Los equipos rotan a la siguiente estación (45 min).</div>
+            </div>
+            <div class="timeline-item">
+                <div class="time">10:45 – 11:00</div>
+                <div class="title">☕ Descanso</div>
+                <div class="desc">15 minutos de pausa.</div>
+            </div>
+            <div class="timeline-item" style="border-left: 3px solid var(--orange);">
+                <div class="time" style="color:var(--orange);">11:00 – 11:45</div>
+                <div class="title">🟠 Rotación 3</div>
+                <div class="desc">Tercera estación (45 min).</div>
+            </div>
+            <div class="timeline-item" style="border-left: 3px solid var(--purple);">
+                <div class="time" style="color:var(--purple);">11:45 – 12:30</div>
+                <div class="title">🟣 Rotación 4</div>
+                <div class="desc">Última estación (45 min).</div>
+            </div>
+            <div class="timeline-item">
+                <div class="time">12:30 – 13:00</div>
+                <div class="title">🎯 Puesta en común y cierre</div>
+                <div class="desc">Cada equipo presenta su hallazgo más importante. Reflexión grupal. Entrega de documentos.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROTACIONES -->
+    <section>
+        <h2><span class="icon" style="background:#fef3c7;color:var(--orange);">🔄</span> Orden de Rotación</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Equipo A</th>
+                    <th>Equipo B</th>
+                    <th>Equipo C</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>09:15 – 10:00</strong></td>
+                    <td>🟢 Estación 1</td>
+                    <td>🔵 Estación 2</td>
+                    <td>🟠 Estación 3</td>
+                </tr>
+                <tr>
+                    <td><strong>10:00 – 10:45</strong></td>
+                    <td>🔵 Estación 2</td>
+                    <td>🟠 Estación 3</td>
+                    <td>🟣 Estación 4</td>
+                </tr>
+                <tr>
+                    <td><strong>11:00 – 11:45</strong></td>
+                    <td>🟠 Estación 3</td>
+                    <td>🟣 Estación 4</td>
+                    <td>🟢 Estación 1</td>
+                </tr>
+                <tr>
+                    <td><strong>11:45 – 12:30</strong></td>
+                    <td>🟣 Estación 4</td>
+                    <td>🟢 Estación 1</td>
+                    <td>🔵 Estación 2</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box warn">
+            <div class="label">⏰ Importante</div>
+            <p>Cuando suene el aviso del formador, <strong>guardad vuestro documento inmediatamente</strong> y rotad a la siguiente estación. ¡El tiempo es limitado como en una auditoría real!</p>
+        </div>
+    </section>
+
+    <!-- ENTREGABLES -->
+    <section>
+        <h2><span class="icon" style="background:#ecfdf5;color:var(--green);">📦</span> Entregables Finales</h2>
+        <div class="deliverable">
+            <div class="label">📋 Cada equipo entrega</div>
+            <ul>
+                <li><strong>Estacion1_Equipo[X].docx</strong> — Inventario de activos + Triada CIA + Análisis de riesgos</li>
+                <li><strong>Estacion2_Equipo[X].docx</strong> — Auditoría de contraseñas + Política + Tabla de permisos</li>
+                <li><strong>Estacion3_Equipo[X].docx</strong> — Diagrama de red + Reglas de firewall</li>
+                <li><strong>Estacion4_Equipo[X].docx</strong> — Informe de incidente + Plan de respuesta</li>
+            </ul>
+        </div>
+        <p>Todos los documentos deben incluir: <strong>portada con nombres, fecha y número de equipo</strong>, capturas de pantalla con explicaciones debajo de cada una, y tablas correctamente formateadas.</p>
+    </section>
+
+    <!-- NORMAS -->
+    <section>
+        <h2><span class="icon" style="background:#fee2e2;color:var(--red);">⚠️</span> Normas de la Práctica</h2>
+        <ol>
+            <li><strong>Trabajad en equipo</strong>: todos los miembros deben participar activamente.</li>
+            <li><strong>No copiéis</strong>: cada equipo puede llegar a conclusiones diferentes y todas pueden ser válidas si están bien justificadas.</li>
+            <li><strong>Justificad siempre</strong>: no basta con decir "bloquear el puerto 23". Hay que explicar <em>por qué</em>.</li>
+            <li><strong>Capturas con explicación</strong>: cada captura de pantalla debe tener debajo un párrafo explicando qué se ve y por qué es relevante.</li>
+            <li><strong>Guardad constantemente</strong>: guardad vuestro documento cada pocos minutos (Ctrl+S).</li>
+            <li><strong>Preguntad si tenéis dudas</strong>: el formador está para ayudaros, ¡es vuestro compañero senior!</li>
+        </ol>
+    </section>
+
+</div>
+
+<footer>
+    <p>UF1353 · Monitorización de Accesos y Seguridad Informática · Formación Profesional para el Empleo</p>
+    <p style="margin-top:8px;">Práctica diseñada para <strong>ClínicaVida</strong> — Escenario simulado con fines educativos</p>
+</footer>
+
+</body>
+</html>

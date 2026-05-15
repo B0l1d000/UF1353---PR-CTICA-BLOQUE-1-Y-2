@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica Simulada — ClínicaVida · UF1353</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ─── NAVBAR ─── */
+        .top-nav {
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .nav-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            height: 62px;
+            gap: 8px;
+        }
+        .nav-brand {
+            font-weight: 900;
+            font-size: 0.95rem;
+            color: #fff;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .nav-brand .dot {
+            width: 9px; height: 9px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+        .nav-links {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            color: #94a3b8;
+            background: none;
+            border: 1px solid transparent;
+            font-size: 13.5px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .nav-btn.active {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .nav-btn[data-color="green"].active  { background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.4); }
+        .nav-btn[data-color="blue"].active   { background: rgba(59,130,246,0.18); border-color: rgba(59,130,246,0.4); }
+        .nav-btn[data-color="orange"].active { background: rgba(245,158,11,0.18); border-color: rgba(245,158,11,0.4); }
+        .nav-btn[data-color="purple"].active { background: rgba(139,92,246,0.18); border-color: rgba(139,92,246,0.4); }
+        .nav-btn[data-color="white"].active  { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+
+        .nav-submit {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+            color: #fff !important;
+            border: none !important;
+            box-shadow: 0 2px 12px rgba(16,185,129,0.4);
+            font-weight: 700 !important;
+            letter-spacing: 0.3px;
+        }
+        .nav-submit:hover {
+            box-shadow: 0 4px 20px rgba(16,185,129,0.55) !important;
+            transform: translateY(-1px);
+        }
+        .nav-submit.active {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+            border: none !important;
+        }
+
+        /* ─── CONTENT AREA ─── */
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ─── IFRAMES ─── */
+        .frame-wrapper {
+            position: absolute;
+            inset: 0;
+            display: none;
+        }
+        .frame-wrapper.active { display: block; }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* ─── ENVIAR (inline section) ─── */
+        .page-enviar {
+            position: absolute;
+            inset: 0;
+            display: none;
+            overflow-y: auto;
+            background: #f1f5f9;
+        }
+        .page-enviar.active { display: block; }
+
+        /* ─── ENVIAR CONTENT ─── */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1a365d 60%, #2d3748 100%);
+            color: white; padding: 56px 40px; text-align: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 70%, rgba(59,130,246,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(139,92,246,0.1) 0%, transparent 50%);
+        }
+        .hero * { position: relative; z-index: 1; }
+        .hero .badge {
+            display: inline-block; background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 50px;
+            padding: 6px 20px; font-size: 12px; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px;
+        }
+        .hero h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; }
+        .hero h1 span { color: #10b981; }
+        .hero .subtitle { font-size: 1.05rem; opacity: 0.75; max-width: 560px; margin: 0 auto; }
+
+        .ec { max-width: 860px; margin: 0 auto; padding: 36px 24px; }
+        .card {
+            background: #fff; border-radius: 16px; padding: 32px;
+            margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            font-size: 1.3rem; font-weight: 800; margin-bottom: 18px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .card h2 .icon {
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .form-group label { font-weight: 700; font-size: 13px; display: block; margin-bottom: 6px; color: #475569; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 11px 14px; border-radius: 10px;
+            border: 2px solid #e2e8f0; font-family: 'Inter', sans-serif;
+            font-size: 14px; background: #f8fafc; outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: #10b981; }
+
+        .upload-row {
+            border-radius: 14px; padding: 20px 24px;
+            display: flex; align-items: center; gap: 20px;
+            margin-bottom: 14px; flex-wrap: wrap;
+        }
+        .upload-row .emoji { font-size: 2rem; flex-shrink: 0; }
+        .upload-row .info { flex: 1; min-width: 180px; }
+        .upload-row .info strong { font-weight: 800; font-size: 0.95rem; display: block; margin-bottom: 3px; }
+        .upload-row .info span { font-size: 12px; color: #6b7280; }
+        .upload-row .info code {
+            background: rgba(0,0,0,0.06); padding: 1px 6px;
+            border-radius: 4px; font-size: 12px;
+        }
+        .upload-label { cursor: pointer; }
+        .upload-btn-inner {
+            background: #f1f5f9; border: 2px dashed #cbd5e1;
+            border-radius: 10px; padding: 10px 18px;
+            font-size: 13px; font-weight: 700; color: #64748b;
+            transition: all 0.2s; white-space: nowrap; display: block; text-align: center;
+        }
+        .upload-btn-inner:hover { background: #ecfdf5; border-color: #10b981; color: #065f46; }
+        .upload-btn-inner.filled { background: #ecfdf5; border-color: #10b981; color: #065f46; border-style: solid; }
+
+        .resumen-box {
+            background: #f8fafc; border-radius: 12px;
+            padding: 20px 24px; font-size: 14px; color: #475569;
+            line-height: 2;
+        }
+        .btn-send {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white; border: none; padding: 16px 52px;
+            border-radius: 12px; font-size: 1rem; font-weight: 800;
+            font-family: 'Inter', sans-serif; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.4);
+            letter-spacing: 0.5px; transition: all 0.2s;
+            display: block; margin: 28px auto 0;
+        }
+        .btn-send:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(16,185,129,0.55); }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 860px) {
+            .nav-brand { display: none; }
+            .nav-inner { padding: 0 12px; }
+            .nav-btn { font-size: 12px; padding: 7px 10px; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════════ NAVBAR ════════ -->
+<nav class="top-nav">
+    <div class="nav-inner">
+        <div class="nav-brand">
+            <div class="dot"></div>
+            ClínicaVida · UF1353
+        </div>
+        <div class="nav-links">
+            <button class="nav-btn active" data-color="white" data-target="guia" onclick="showPage(this)">🏠 Página Principal</button>
+            <button class="nav-btn" data-color="green"  data-target="est1"  onclick="showPage(this)">🟢 Estación 1</button>
+            <button class="nav-btn" data-color="blue"   data-target="est2"  onclick="showPage(this)">🔵 Estación 2</button>
+            <button class="nav-btn" data-color="orange" data-target="est3"  onclick="showPage(this)">🟠 Estación 3</button>
+            <button class="nav-btn" data-color="purple" data-target="est4"  onclick="showPage(this)">🟣 Estación 4</button>
+            <button class="nav-btn nav-submit" data-color="green" data-target="enviar" onclick="showPage(this)">📤 Enviar Formulario</button>
+        </div>
+    </div>
+</nav>
+
+<!-- ════════ CONTENT AREA ════════ -->
+<div class="content-area">
+
+    <!-- IFRAMES — cada página conserva sus propios estilos -->
+    <div id="frame-guia" class="frame-wrapper active">
+        <iframe src="guia_alumno_principal.html" title="Página Principal"></iframe>
+    </div>
+    <div id="frame-est1" class="frame-wrapper">
+        <iframe src="estacion1_inventario_activos.html" title="Estación 1"></iframe>
+    </div>
+    <div id="frame-est2" class="frame-wrapper">
+        <iframe src="estacion2_auditoria_contraseñas.html" title="Estación 2"></iframe>
+    </div>
+    <div id="frame-est3" class="frame-wrapper">
+        <iframe src="estacion3_firewall_red.html" title="Estación 3"></iframe>
+    </div>
+    <div id="frame-est4" class="frame-wrapper">
+        <iframe src="estacion4_simulacro_ataque.html" title="Estación 4"></iframe>
+    </div>
+
+    <!-- ENVIAR FORMULARIO — inline, sin iframe -->
+    <div id="frame-enviar" class="page-enviar">
+
+        <div class="hero">
+            <div class="badge">Entrega Final</div>
+            <h1>📤 Entrega de <span>Documentos</span></h1>
+            <p class="subtitle">Adjunta los documentos Word generados en cada estación antes de enviar.</p>
+        </div>
+
+        <div class="ec">
+
+            <!-- Datos del equipo -->
+            <div class="card">
+                <h2>
+                    <span class="icon" style="background:#ecfdf5;color:#10b981;">👥</span>
+                    Datos del Equipo
+                </h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="equipo">Equipo</label>
+                        <select id="equipo" onchange="updateResumen()">
+                            <option value="">-- Selecciona --</option>
+                            <option value="A">Equipo A</option>
+                            <option value="B">Equipo B</option>
+                            <option value="C">Equipo C</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="miembros">Nombres de los miembros</label>
+                        <input type="text" id="miembros" placeholder="Ej: Ana García, Luis Pérez, ..." oninput="updateResumen()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentos -->
+            <div class="card">
+                <h2>
+                    <span class="icon" style="background:#eff6ff;color:#3b82f6;">📂</span>
+                    Documentos por Estación
+                </h2>
+                <p style="font-size:14px;color:#64748b;margin-bottom:20px;">
+                    Adjunta el archivo Word (<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;">.docx</code>) de cada estación.
+                    El nombre debe seguir el formato: <strong>Estacion[N]_Equipo[X].docx</strong>
+                </p>
+
+                <!-- Est 1 -->
+                <div class="upload-row" style="background:linear-gradient(135deg,#f0fdf4,#fff);border:2px solid #10b981;">
+                    <div class="emoji">🟢</div>
+                    <div class="info">
+                        <strong style="color:#065f46;">Estación 1 — Inventario de Activos y Triada CIA</strong>
+                        <span>Nombre: <code>Estacion1_Equipo[X].docx</code></span>
+                    </div>
+                    <label class="upload-label">
+                        <input type="file" id="f1" accept=".docx,.doc,.pdf" style="display:none" onchange="setFile(this,'btn1')">
+                        <div id="btn1" class="upload-btn-inner">📎 Seleccionar</div>
+                    </label>
+                </div>
+
+                <!-- Est 2 -->
+                <div class="upload-row" style="background:linear-gradient(135deg,#eff6ff,#fff);border:2px solid #3b82f6;">
+                    <div class="emoji">🔵</div>
+                    <div class="info">
+                        <strong style="color:#1e3a5f;">Estación 2 — Auditoría de Contraseñas</strong>
+                        <span>Nombre: <code>Estacion2_Equipo[X].docx</code></span>
+                    </div>
+                    <label class="upload-label">
+                        <input type="file" id="f2" accept=".docx,.doc,.pdf" style="display:none" onchange="setFile(this,'btn2')">
+                        <div id="btn2" class="upload-btn-inner">📎 Seleccionar</div>
+                    </label>
+                </div>
+
+                <!-- Est 3 -->
+                <div class="upload-row" style="background:linear-gradient(135deg,#fffbeb,#fff);border:2px solid #f59e0b;">
+                    <div class="emoji">🟠</div>
+                    <div class="info">
+                        <strong style="color:#92400e;">Estación 3 — Firewall y Arquitectura de Red</strong>
+                        <span>Nombre: <code>Estacion3_Equipo[X].docx</code></span>
+                    </div>
+                    <label class="upload-label">
+                        <input type="file" id="f3" accept=".docx,.doc,.pdf" style="display:none" onchange="setFile(this,'btn3')">
+                        <div id="btn3" class="upload-btn-inner">📎 Seleccionar</div>
+                    </label>
+                </div>
+
+                <!-- Est 4 -->
+                <div class="upload-row" style="background:linear-gradient(135deg,#f5f3ff,#fff);border:2px solid #8b5cf6;">
+                    <div class="emoji">🟣</div>
+                    <div class="info">
+                        <strong style="color:#5b21b6;">Estación 4 — Simulacro de Ataque</strong>
+                        <span>Nombre: <code>Estacion4_Equipo[X].docx</code></span>
+                    </div>
+                    <label class="upload-label">
+                        <input type="file" id="f4" accept=".docx,.doc,.pdf" style="display:none" onchange="setFile(this,'btn4')">
+                        <div id="btn4" class="upload-btn-inner">📎 Seleccionar</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Resumen y envío -->
+            <div class="card">
+                <h2>
+                    <span class="icon" style="background:#f0fdf4;color:#10b981;">✅</span>
+                    Resumen y Envío
+                </h2>
+                <div id="resumen" class="resumen-box">
+                    Completa el equipo, los nombres y adjunta los 4 documentos para ver el resumen.
+                </div>
+                <button class="btn-send" onclick="submitForm()">📤 Confirmar y Enviar Práctica</button>
+            </div>
+
+        </div><!-- /ec -->
+    </div><!-- /page-enviar -->
+
+</div><!-- /content-area -->
+
+<script>
+    function showPage(btn) {
+        const target = btn.dataset.target;
+
+        // Toggle frame wrappers
+        document.querySelectorAll('.frame-wrapper, .page-enviar').forEach(el => {
+            el.classList.remove('active');
+        });
+        const frame = document.getElementById('frame-' + target);
+        if (frame) frame.classList.add('active');
+
+        // Toggle nav active state
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function setFile(input, btnId) {
+        const btn = document.getElementById(btnId);
+        if (input.files && input.files[0]) {
+            btn.textContent = '✅ ' + input.files[0].name;
+            btn.classList.add('filled');
+        } else {
+            btn.textContent = '📎 Seleccionar';
+            btn.classList.remove('filled');
+        }
+        updateResumen();
+    }
+
+    function updateResumen() {
+        const equipo   = document.getElementById('equipo').value;
+        const miembros = document.getElementById('miembros').value.trim();
+        const files    = [
+            { id: 'f1', label: 'Estación 1' },
+            { id: 'f2', label: 'Estación 2' },
+            { id: 'f3', label: 'Estación 3' },
+            { id: 'f4', label: 'Estación 4' },
+        ];
+        let html = '<ul style="padding-left:18px;margin:0;line-height:2.2;">';
+        html += '<li><strong>Equipo:</strong> ' + (equipo  ? '<span style="color:#10b981;font-weight:700">Equipo ' + equipo + '</span>' : '<span style="color:#ef4444">⚠️ Sin seleccionar</span>') + '</li>';
+        html += '<li><strong>Miembros:</strong> ' + (miembros ? '<span style="color:#10b981;font-weight:700">' + miembros + '</span>' : '<span style="color:#ef4444">⚠️ Sin rellenar</span>') + '</li>';
+        files.forEach(f => {
+            const inp = document.getElementById(f.id);
+            const ok  = inp && inp.files && inp.files[0];
+            html += '<li>' + f.label + ': ' + (ok
+                ? '<span style="color:#10b981;font-weight:700">✅ ' + inp.files[0].name + '</span>'
+                : '<span style="color:#ef4444">⚠️ No adjuntado</span>') + '</li>';
+        });
+        html += '</ul>';
+        document.getElementById('resumen').innerHTML = html;
+    }
+
+    function submitForm() {
+        const equipo   = document.getElementById('equipo').value;
+        const miembros = document.getElementById('miembros').value.trim();
+        const ids      = ['f1','f2','f3','f4'];
+        const labels   = { f1:'Estación 1', f2:'Estación 2', f3:'Estación 3', f4:'Estación 4' };
+        const missing  = ids.filter(id => { const el = document.getElementById(id); return !el || !el.files || !el.files[0]; });
+
+        if (!equipo || !miembros) {
+            alert('⚠️ Por favor, selecciona el equipo e introduce los nombres de los miembros.');
+            return;
+        }
+        if (missing.length) {
+            alert('⚠️ Faltan documentos:\n' + missing.map(id => '• ' + labels[id]).join('\n'));
+            return;
+        }
+        alert('✅ ¡Práctica enviada correctamente!\n\nEquipo ' + equipo + '\nMiembros: ' + miembros + '\n\nTodos los documentos adjuntados correctamente.');
+    }
+</script>
+</body>
+</html>

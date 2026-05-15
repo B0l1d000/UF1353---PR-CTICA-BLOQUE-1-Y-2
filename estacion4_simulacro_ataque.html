@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación 4 — Simulacro de Ataque · ClínicaVida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root{--accent:#8b5cf6;--accent-dark:#7c3aed;--accent-light:#ede9fe;--dark:#0f172a;--dark2:#1e293b;--gray:#64748b;--light:#f1f5f9;--white:#fff;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--blue:#3b82f6}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--light);color:var(--dark);line-height:1.7;font-size:15px}
+        @media print{body{background:white;font-size:11px;line-height:1.5}.hero{padding:30px 20px!important}section,.task-box{padding:18px!important;margin-bottom:14px!important;break-inside:avoid}}
+        .hero{background:linear-gradient(135deg,#7c3aed 0%,#8b5cf6 50%,#a78bfa 100%);color:white;padding:50px 40px;text-align:center}
+        .hero .badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:50px;padding:5px 18px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+        .hero h1{font-size:2.4rem;font-weight:900;margin-bottom:8px}
+        .hero .subtitle{font-size:1.05rem;opacity:.85;max-width:550px;margin:0 auto}
+        .hero-meta{display:flex;justify-content:center;gap:24px;margin-top:20px;flex-wrap:wrap}
+        .hero-meta .item{background:rgba(255,255,255,.15);border-radius:10px;padding:8px 20px;font-size:13px}
+        .container{max-width:900px;margin:0 auto;padding:36px 24px}
+        section{background:var(--white);border-radius:16px;padding:32px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.04)}
+        section h2{font-size:1.4rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+        section h2 .icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+        h3{font-size:1.05rem;font-weight:700;margin:20px 0 10px;color:var(--dark2)}
+        .scenario{background:linear-gradient(135deg,#ede9fe,#ddd6fe);border-left:5px solid var(--accent);border-radius:12px;padding:22px 26px;margin:20px 0}
+        .scenario .label{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-dark);margin-bottom:6px}
+        .scenario p{color:#4c1d95;font-style:italic}
+        .task-box{border:2px solid var(--accent);border-radius:14px;padding:24px 28px;margin:24px 0;background:linear-gradient(135deg,#f5f3ff,#fff)}
+        .task-box .task-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+        .task-box .task-num{background:var(--accent);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
+        .task-box .task-title{font-weight:800;font-size:1.1rem;color:var(--accent-dark)}
+        .task-box .time-badge{background:var(--accent-light);color:var(--accent-dark);padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-left:auto}
+        .info-box{border-radius:10px;padding:16px 20px;margin:16px 0;font-size:14px}
+        .info-box.tip{background:#ecfdf5;border-left:4px solid var(--green);color:#065f46}
+        .info-box.warn{background:#fef3c7;border-left:4px solid var(--orange);color:#92400e}
+        .info-box.important{background:#ede9fe;border-left:4px solid var(--accent);color:#5b21b6}
+        .info-box.danger{background:#fee2e2;border-left:4px solid var(--red);color:#991b1b}
+        .info-box .label{font-weight:700;margin-bottom:4px}
+        table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+        th{background:var(--dark);color:white;padding:10px 14px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+        th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+        td{padding:10px 14px;border-bottom:1px solid #e2e8f0}
+        tr:nth-child(even) td{background:#f8fafc}
+        td.fill{background:#fef9c3!important;min-width:80px}
+        .incident-box{background:var(--dark);color:#e2e8f0;border-radius:14px;padding:28px;margin:20px 0;font-family:'Courier New',monospace;font-size:13px;line-height:1.9;border:2px solid #334155}
+        .incident-box .incident-label{font-family:'Inter',sans-serif;font-weight:800;font-size:16px;color:var(--red);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        .incident-box .log-line{color:#94a3b8}.incident-box .log-highlight{color:#fbbf24;font-weight:700}.incident-box .log-danger{color:#f87171;font-weight:700}.incident-box .log-info{color:#60a5fa}
+        .tool-card{display:inline-block;background:var(--white);border:2px solid #e2e8f0;border-radius:10px;padding:10px 16px;margin:4px;font-size:13px;font-weight:600;transition:border-color .2s}
+        .deliverable{background:linear-gradient(135deg,#ede9fe,#ddd6fe);border:2px solid var(--accent);border-radius:12px;padding:20px 24px;margin:20px 0}
+        .deliverable .label{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#5b21b6;margin-bottom:8px}
+        ul,ol{padding-left:20px;margin:8px 0}li{margin:5px 0}
+        code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px}
+        footer{text-align:center;padding:30px 20px;color:var(--gray);font-size:12px}
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="badge">Estación 4 de 4</div>
+    <h1>🟣 Simulacro de<br>Ataque</h1>
+    <p class="subtitle">¡Alarma! Se ha detectado actividad sospechosa en ClínicaVida. Diagnosticad el incidente y responded.</p>
+    <div class="hero-meta">
+        <div class="item">⏱ <strong>45 minutos</strong></div>
+        <div class="item">📄 Entregable: <strong>Estacion4_Equipo[X].docx</strong></div>
+    </div>
+</div>
+
+<div class="container">
+
+    <section>
+        <h2><span class="icon" style="background:#ede9fe;color:var(--accent);">🎯</span> Objetivo de esta estación</h2>
+        <p>Saber detectar y responder ante un ataque es <strong>la habilidad más valiosa</strong> de un técnico de seguridad. En esta estación vais a:</p>
+        <ol>
+            <li>Leer un <strong>informe de incidente</strong> con los datos de un ataque real simulado</li>
+            <li><strong>Diagnosticar</strong> qué tipo de ataque ha ocurrido</li>
+            <li>Evaluar qué <strong>pilares de la Triada CIA</strong> se han visto afectados</li>
+            <li>Proponer un <strong>plan de respuesta</strong> inmediata y medidas preventivas</li>
+            <li>Investigar brevemente el tipo de ataque en Internet</li>
+        </ol>
+        <div class="scenario">
+            <div class="label">📋 Situación de emergencia</div>
+            <p>"¡Son las 8 de la mañana y acabáis de llegar a la clínica! El gerente os llama alterado: 'Algo raro pasa con los ordenadores'. Vuestro trabajo como equipo de seguridad empieza AHORA."</p>
+        </div>
+    </section>
+
+    <!-- ASIGNACIÓN DE INCIDENTES -->
+    <section>
+        <h2><span class="icon" style="background:#fee2e2;color:var(--red);">🚨</span> Vuestro Incidente Asignado</h2>
+        <p>Cada equipo trabaja con un <strong>incidente diferente</strong>. Buscad el vuestro:</p>
+
+        <div class="info-box warn">
+            <div class="label">⚠️ El formador os indicará qué incidente os corresponde</div>
+            <p><strong>Equipo A</strong> → Incidente ROJO · <strong>Equipo B</strong> → Incidente NARANJA · <strong>Equipo C</strong> → Incidente AZUL</p>
+            <p>Leed SOLO vuestro incidente. Los demás los descubriréis en la puesta en común.</p>
+        </div>
+    </section>
+
+    <!-- ═══ INCIDENTE ROJO ═══ -->
+    <section id="rojo">
+        <h2 style="color:var(--red);">🔴 Incidente ROJO — Ataque DDoS + Phishing</h2>
+        <div class="incident-box">
+            <div class="incident-label">🚨 ALERTA DEL SISTEMA DE MONITORIZACIÓN</div>
+            <p class="log-line">[2026-05-14 07:42:13] <span class="log-info">INFO</span> — Servidor web de citas recibiendo tráfico inusual</p>
+            <p class="log-line">[2026-05-14 07:43:01] <span class="log-highlight">WARN</span> — CPU del servidor web al 89%. 3.400 peticiones/segundo desde 200+ IPs diferentes</p>
+            <p class="log-line">[2026-05-14 07:45:22] <span class="log-danger">CRITICAL</span> — Servidor web NO RESPONDE. Pacientes no pueden pedir citas online</p>
+            <p class="log-line">[2026-05-14 07:46:00] <span class="log-danger">CRITICAL</span> — CPU al 100%. Peticiones desde IPs de China, Rusia y Brasil</p>
+            <p class="log-line">[2026-05-14 07:50:11] <span class="log-highlight">WARN</span> — Correo sospechoso detectado en buzón de recepción:</p>
+            <p class="log-line" style="margin-left:20px;color:#fbbf24;">De: soporte@clinicavida-seguridad.com</p>
+            <p class="log-line" style="margin-left:20px;color:#fbbf24;">Asunto: "URGENTE: Cambie su contraseña inmediatamente"</p>
+            <p class="log-line" style="margin-left:20px;color:#f87171;">Enlace: http://cl1nicavida-soporte.ru/cambiar-password</p>
+            <p class="log-line">[2026-05-14 07:52:30] <span class="log-danger">CRITICAL</span> — Carlos (recepción) ha hecho clic en el enlace e introducido sus credenciales</p>
+        </div>
+        <div class="info-box danger">
+            <div class="label">Resumen de lo ocurrido</div>
+            <p>El servidor web de citas ha sido saturado por miles de peticiones falsas (las IPs son de botnets). Mientras el equipo estaba distraído con la caída, Carlos recibió un email de phishing que parecía del "soporte de la clínica" y ha introducido su usuario y contraseña en una web falsa rusa.</p>
+        </div>
+    </section>
+
+    <!-- ═══ INCIDENTE NARANJA ═══ -->
+    <section id="naranja">
+        <h2 style="color:var(--orange);">🟠 Incidente NARANJA — Sniffing en WiFi + Robo de datos</h2>
+        <div class="incident-box">
+            <div class="incident-label">🚨 ALERTA DEL SISTEMA DE MONITORIZACIÓN</div>
+            <p class="log-line">[2026-05-14 08:10:05] <span class="log-info">INFO</span> — Dispositivo desconocido conectado a WiFi: MAC aa:bb:cc:dd:ee:ff</p>
+            <p class="log-line">[2026-05-14 08:10:30] <span class="log-highlight">WARN</span> — El dispositivo está ejecutando software de captura de paquetes (Wireshark)</p>
+            <p class="log-line">[2026-05-14 08:15:44] <span class="log-highlight">WARN</span> — Tráfico HTTP sin cifrar detectado: credenciales de correo del Dr. López capturadas</p>
+            <p class="log-line">[2026-05-14 08:16:02] <span class="log-danger">CRITICAL</span> — El dispositivo capturador está en la MISMA red WiFi que los PCs de empleados</p>
+            <p class="log-line">[2026-05-14 08:18:33] <span class="log-danger">CRITICAL</span> — Acceso no autorizado al correo del Dr. López desde IP desconocida</p>
+            <p class="log-line">[2026-05-14 08:20:10] <span class="log-danger">CRITICAL</span> — Descarga masiva de adjuntos (radiografías de pacientes) desde el correo</p>
+        </div>
+        <div class="info-box danger">
+            <div class="label">Resumen de lo ocurrido</div>
+            <p>Un "paciente" en la sala de espera ha conectado su portátil a la WiFi de la clínica (que es la MISMA red que usan los empleados). Con Wireshark ha capturado tráfico sin cifrar y ha obtenido la contraseña del correo del Dr. López. Ahora está descargando radiografías de pacientes desde el buzón del doctor.</p>
+        </div>
+    </section>
+
+    <!-- ═══ INCIDENTE AZUL ═══ -->
+    <section id="azul">
+        <h2 style="color:var(--blue);">🔵 Incidente AZUL — Brute Force SSH + Acceso no autorizado</h2>
+        <div class="incident-box">
+            <div class="incident-label">🚨 ALERTA DEL SISTEMA DE MONITORIZACIÓN</div>
+            <p class="log-line">[2026-05-14 03:01:12] <span class="log-info">INFO</span> — Intento de login SSH al servidor principal desde IP 185.220.101.34</p>
+            <p class="log-line">[2026-05-14 03:01:13] <span class="log-highlight">WARN</span> — Login fallido: usuario "root", contraseña "admin"</p>
+            <p class="log-line">[2026-05-14 03:01:14] <span class="log-highlight">WARN</span> — Login fallido: usuario "root", contraseña "123456"</p>
+            <p class="log-line">[2026-05-14 03:01:15] <span class="log-highlight">WARN</span> — Login fallido: usuario "root", contraseña "password"</p>
+            <p class="log-line">... [5.847 intentos más durante 2 horas] ...</p>
+            <p class="log-line">[2026-05-14 05:12:44] <span class="log-danger">CRITICAL</span> — LOGIN EXITOSO: usuario "root", contraseña "clinica2024"</p>
+            <p class="log-line">[2026-05-14 05:13:02] <span class="log-danger">CRITICAL</span> — Descarga del archivo /datos/pacientes/historiales_completos.sql (450 MB)</p>
+            <p class="log-line">[2026-05-14 05:15:30] <span class="log-danger">CRITICAL</span> — Instalación de backdoor en /tmp/.hidden_shell</p>
+            <p class="log-line">[2026-05-14 05:16:00] <span class="log-danger">CRITICAL</span> — El atacante ha creado un nuevo usuario "support" con permisos de administrador</p>
+        </div>
+        <div class="info-box danger">
+            <div class="label">Resumen de lo ocurrido</div>
+            <p>Un atacante ha intentado más de 5.000 contraseñas por SSH contra el servidor principal durante la noche. Como el usuario "root" tenía la contraseña "clinica2024" (la misma que usaba la Dra. García), ha conseguido entrar. Ha descargado toda la base de datos de pacientes, ha instalado una puerta trasera y ha creado un nuevo usuario administrador.</p>
+        </div>
+    </section>
+
+    <!-- ═══════ TAREA 1 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">1</div>
+            <div class="task-title">Diagnóstico del Incidente</div>
+            <div class="time-badge">⏱ 15 min</div>
+        </div>
+        <p>Cread vuestro documento Word y completad este <strong>informe de incidente</strong>:</p>
+        <table>
+            <thead><tr><th>Campo</th><th>Vuestra respuesta</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Tipo de ataque</strong></td><td class="fill"><em>Ej: DDoS, Phishing, Sniffing, Brute Force...</em></td></tr>
+                <tr><td><strong>¿Qué ha ocurrido? (resumen en 3-4 líneas)</strong></td><td class="fill"></td></tr>
+                <tr><td><strong>¿Qué pilar CIA se ha visto afectado?</strong></td><td class="fill"><em>¿Confidencialidad, Integridad, Disponibilidad?</em></td></tr>
+                <tr><td><strong>¿Qué activos están comprometidos?</strong></td><td class="fill"></td></tr>
+                <tr><td><strong>Gravedad (1-5)</strong></td><td class="fill"><em>1=leve, 5=catastrófico</em></td></tr>
+                <tr><td><strong>¿Es necesario notificar a la AEPD (datos personales)?</strong></td><td class="fill"><em>Sí/No y por qué</em></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ═══════ TAREA 2 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">2</div>
+            <div class="task-title">Plan de Respuesta Inmediata</div>
+            <div class="time-badge">⏱ 10 min</div>
+        </div>
+        <p>Describid las <strong>5 primeras acciones</strong> que haríais AHORA MISMO para contener el ataque:</p>
+        <table>
+            <thead><tr><th>Orden</th><th>Acción inmediata</th><th>¿Por qué?</th></tr></thead>
+            <tbody>
+                <tr><td>1ª</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>2ª</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>3ª</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>4ª</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>5ª</td><td class="fill"></td><td class="fill"></td></tr>
+            </tbody>
+        </table>
+        <h3>Herramientas de defensa</h3>
+        <p>De esta lista, seleccionad las que aplicaríais a vuestro incidente y explicad cómo:</p>
+        <p>
+            <span class="tool-card">🛡️ Firewall</span>
+            <span class="tool-card">🔍 IDS/IPS (Snort)</span>
+            <span class="tool-card">🔐 VPN</span>
+            <span class="tool-card">🔑 2FA</span>
+            <span class="tool-card">🌐 Separar DMZ</span>
+            <span class="tool-card">📋 Auditoría de permisos</span>
+            <span class="tool-card">🔄 Cambio de contraseñas</span>
+            <span class="tool-card">🚫 Fail2ban</span>
+            <span class="tool-card">📡 Separar redes WiFi</span>
+            <span class="tool-card">🔒 Cifrado TLS/HTTPS</span>
+        </p>
+    </div>
+
+    <!-- ═══════ TAREA 3 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">3</div>
+            <div class="task-title">Medidas Preventivas</div>
+            <div class="time-badge">⏱ 10 min</div>
+        </div>
+        <p>¿Qué medidas habríais implementado <strong>ANTES</strong> del ataque para evitarlo? Escribid al menos 5:</p>
+        <table>
+            <thead><tr><th>Nº</th><th>Medida preventiva</th><th>¿Cómo habría evitado este ataque?</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>2</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>3</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>4</td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>5</td><td class="fill"></td><td class="fill"></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ═══════ TAREA 4 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">4</div>
+            <div class="task-title">Investigación: Busca tu Ataque en Internet</div>
+            <div class="time-badge">⏱ 10 min</div>
+        </div>
+        <p>Buscad en Internet información sobre vuestro tipo de ataque. Haced una <strong>captura de pantalla</strong> de un artículo o web relevante y pegadla en el documento con una explicación de 3-4 líneas debajo.</p>
+        <div class="info-box tip">
+            <div class="label">🔍 Sugerencias de búsqueda</div>
+            <ul>
+                <li>Incidente ROJO: buscar <em>"ataque DDoS cómo funciona"</em> o <em>"phishing ejemplos reales"</em></li>
+                <li>Incidente NARANJA: buscar <em>"ataque sniffing WiFi"</em> o <em>"Wireshark captura contraseñas"</em></li>
+                <li>Incidente AZUL: buscar <em>"brute force SSH ataque"</em> o <em>"Fail2ban protección"</em></li>
+            </ul>
+        </div>
+        <p>Finalmente, escribid una <strong>reflexión de 4-5 líneas</strong>: <em>"¿Qué lección os lleváis de este incidente para vuestro futuro como técnicos de seguridad?"</em></p>
+    </div>
+
+    <!-- ENTREGABLE -->
+    <section>
+        <h2><span class="icon" style="background:#ede9fe;color:var(--accent);">📦</span> Entregable de esta estación</h2>
+        <div class="deliverable">
+            <div class="label">✅ Checklist antes de guardar</div>
+            <ul style="list-style:none;padding:0;">
+                <li>☐ Portada con nombres del equipo y fecha</li>
+                <li>☐ Informe de diagnóstico del incidente completado</li>
+                <li>☐ Plan de respuesta: 5 acciones inmediatas con justificación</li>
+                <li>☐ Herramientas de defensa seleccionadas y explicadas</li>
+                <li>☐ Tabla de 5 medidas preventivas</li>
+                <li>☐ Captura de pantalla de investigación + explicación</li>
+                <li>☐ Reflexión final (4-5 líneas)</li>
+            </ul>
+        </div>
+        <p>Guardad el archivo como: <strong><code>Estacion4_Equipo[X].docx</code></strong></p>
+    </section>
+
+</div>
+
+<footer>
+    <p>Estación 4 de 4 · Práctica Simulada ClínicaVida · UF1353 Ciberseguridad</p>
+</footer>
+</body>
+</html>

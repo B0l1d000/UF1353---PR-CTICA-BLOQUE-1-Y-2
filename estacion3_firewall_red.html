@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación 3 — Monta tu Firewall y Arquitectura de Red · ClínicaVida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent:#f59e0b; --accent-dark:#d97706; --accent-light:#fef3c7;
+            --dark:#0f172a; --dark2:#1e293b; --gray:#64748b; --light:#f1f5f9; --white:#fff;
+            --green:#10b981; --orange:#f59e0b; --red:#ef4444; --blue:#3b82f6; --purple:#8b5cf6;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:var(--light);color:var(--dark);line-height:1.7;font-size:15px}
+        @media print{body{background:white;font-size:11px;line-height:1.5}.hero{padding:30px 20px!important}section{padding:18px!important;margin-bottom:14px!important;break-inside:avoid}}
+
+        .hero{background:linear-gradient(135deg,#d97706 0%,#f59e0b 50%,#fbbf24 100%);color:white;padding:50px 40px;text-align:center}
+        .hero .badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:50px;padding:5px 18px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+        .hero h1{font-size:2.4rem;font-weight:900;margin-bottom:8px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.15)}
+        .hero .subtitle{font-size:1.05rem;opacity:.9;max-width:550px;margin:0 auto}
+        .hero-meta{display:flex;justify-content:center;gap:24px;margin-top:20px;flex-wrap:wrap}
+        .hero-meta .item{background:rgba(255,255,255,.2);border-radius:10px;padding:8px 20px;font-size:13px}
+
+        .container{max-width:900px;margin:0 auto;padding:36px 24px}
+        section{background:var(--white);border-radius:16px;padding:32px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.04)}
+        section h2{font-size:1.4rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+        section h2 .icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+        h3{font-size:1.05rem;font-weight:700;margin:20px 0 10px;color:var(--dark2)}
+
+        .scenario{background:linear-gradient(135deg,#fef3c7,#fde68a);border-left:5px solid var(--accent);border-radius:12px;padding:22px 26px;margin:20px 0}
+        .scenario .label{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#92400e;margin-bottom:6px}
+        .scenario p{color:#78350f;font-style:italic}
+
+        .task-box{border:2px solid var(--accent);border-radius:14px;padding:24px 28px;margin:24px 0;background:linear-gradient(135deg,#fffbeb,#fff)}
+        .task-box .task-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+        .task-box .task-num{background:var(--accent);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
+        .task-box .task-title{font-weight:800;font-size:1.1rem;color:var(--accent-dark)}
+        .task-box .time-badge{background:var(--accent-light);color:var(--accent-dark);padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-left:auto}
+
+        .info-box{border-radius:10px;padding:16px 20px;margin:16px 0;font-size:14px}
+        .info-box.tip{background:#ecfdf5;border-left:4px solid var(--green);color:#065f46}
+        .info-box.warn{background:#fef3c7;border-left:4px solid var(--orange);color:#92400e}
+        .info-box.important{background:#ede9fe;border-left:4px solid var(--purple);color:#5b21b6}
+        .info-box.danger{background:#fee2e2;border-left:4px solid var(--red);color:#991b1b}
+        .info-box .label{font-weight:700;margin-bottom:4px}
+
+        table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+        th{background:var(--dark);color:white;padding:10px 14px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+        th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+        td{padding:10px 14px;border-bottom:1px solid #e2e8f0}
+        tr:nth-child(even) td{background:#f8fafc}
+        td.fill{background:#fef9c3!important;min-width:80px}
+
+        .network-diagram{background:#0f172a;border-radius:16px;padding:30px;margin:20px 0;color:white;text-align:center}
+        .network-diagram h3{color:#fbbf24;margin:0 0 20px;text-align:center}
+        .zone-row{display:flex;gap:16px;justify-content:center;margin:10px 0;flex-wrap:wrap}
+        .zone{border-radius:12px;padding:16px 20px;min-width:180px;text-align:center;flex:1;max-width:220px}
+        .zone.internet{background:rgba(239,68,68,.2);border:2px dashed #ef4444}
+        .zone.dmz{background:rgba(245,158,11,.2);border:2px solid #f59e0b}
+        .zone.lan{background:rgba(59,130,246,.2);border:2px solid #3b82f6}
+        .zone.core{background:rgba(16,185,129,.2);border:2px solid #10b981}
+        .zone .zone-name{font-weight:800;font-size:14px;margin-bottom:6px}
+        .zone .zone-trust{font-size:11px;opacity:.7;margin-bottom:8px}
+        .zone .zone-items{font-size:12px;text-align:left;line-height:1.8}
+        .fw-bar{background:linear-gradient(90deg,#ef4444,#f59e0b);padding:8px;border-radius:6px;margin:8px 0;font-size:12px;font-weight:700;text-align:center;letter-spacing:1px}
+
+        .port-card{display:inline-block;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:700;margin:3px}
+        .port-card.allow{background:#d1fae5;color:#065f46;border:1px solid #10b981}
+        .port-card.block{background:#fee2e2;color:#991b1b;border:1px solid #ef4444}
+        .port-card.restrict{background:#fef3c7;color:#92400e;border:1px solid #f59e0b}
+
+        .deliverable{background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid var(--accent);border-radius:12px;padding:20px 24px;margin:20px 0}
+        .deliverable .label{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#92400e;margin-bottom:8px}
+
+        ul,ol{padding-left:20px;margin:8px 0}
+        li{margin:5px 0}
+        code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px}
+        a{color:var(--blue)}
+        footer{text-align:center;padding:30px 20px;color:var(--gray);font-size:12px}
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="badge">Estación 3 de 4</div>
+    <h1>🟠 Monta tu Firewall<br>y Arquitectura de Red</h1>
+    <p class="subtitle">Diseña las zonas de red de ClínicaVida, coloca los servidores y configura las reglas del firewall</p>
+    <div class="hero-meta">
+        <div class="item">⏱ <strong>45 minutos</strong></div>
+        <div class="item">📄 Entregable: <strong>Estacion3_Equipo[X].docx</strong></div>
+    </div>
+</div>
+
+<div class="container">
+
+    <section>
+        <h2><span class="icon" style="background:#fef3c7;color:var(--accent);">🎯</span> Objetivo de esta estación</h2>
+        <p>La seguridad perimetral es la primera línea de defensa. En esta estación vais a:</p>
+        <ol>
+            <li><strong>Diseñar la arquitectura de red</strong> de ClínicaVida con zonas separadas (DMZ, LAN, Núcleo)</li>
+            <li><strong>Crear un diagrama de red</strong> visual con una herramienta online</li>
+            <li><strong>Configurar las reglas del firewall</strong> decidiendo qué puertos abrir, cerrar o restringir</li>
+            <li>Responder <strong>preguntas de reflexión</strong> sobre seguridad perimetral</li>
+        </ol>
+
+        <div class="scenario">
+            <div class="label">📋 El gerente os dice:</div>
+            <p>"El técnico que nos instaló Internet nos dijo que 'todo funciona' y se fue. No sé si tenemos firewall, no sé qué es una DMZ y los pacientes se conectan a la misma WiFi que nosotros. ¿Eso es un problema?"</p>
+        </div>
+    </section>
+
+    <!-- RECORDATORIO TEÓRICO -->
+    <section>
+        <h2><span class="icon" style="background:#fef3c7;color:var(--orange);">📚</span> Recordatorio: Zonas de Red</h2>
+
+        <div class="network-diagram">
+            <h3>Arquitectura de Red con DMZ — Modelo de referencia</h3>
+            <div class="zone-row">
+                <div class="zone internet">
+                    <div class="zone-name">🌐 INTERNET</div>
+                    <div class="zone-trust">Confianza: NULA</div>
+                    <div class="zone-items">Usuarios externos<br>Atacantes potenciales</div>
+                </div>
+            </div>
+            <div class="fw-bar">🔥 FIREWALL EXTERNO 🔥</div>
+            <div class="zone-row">
+                <div class="zone dmz">
+                    <div class="zone-name">🟡 DMZ</div>
+                    <div class="zone-trust">Confianza: BAJA</div>
+                    <div class="zone-items">Servidor web público<br>Servidor DNS<br>Servidor de correo</div>
+                </div>
+            </div>
+            <div class="fw-bar">🔥 FIREWALL INTERNO 🔥</div>
+            <div class="zone-row">
+                <div class="zone lan">
+                    <div class="zone-name">🔵 RED INTERNA (LAN)</div>
+                    <div class="zone-trust">Confianza: MEDIA</div>
+                    <div class="zone-items">PCs de empleados<br>Impresoras<br>WiFi empleados</div>
+                </div>
+                <div class="zone core">
+                    <div class="zone-name">🟢 NÚCLEO</div>
+                    <div class="zone-trust">Confianza: ALTA</div>
+                    <div class="zone-items">Base de datos<br>Backups<br>Servidores críticos</div>
+                </div>
+            </div>
+        </div>
+
+        <h3>Analogía: el aeropuerto ✈️</h3>
+        <p><strong>Internet</strong> = la calle (cualquiera puede estar ahí). <strong>DMZ</strong> = la sala de embarque (acceso controlado con billete). <strong>Red interna</strong> = la zona de oficinas del aeropuerto. <strong>Núcleo</strong> = la cabina del piloto (máxima seguridad).</p>
+
+        <h3>Reglas entre zonas</h3>
+        <table>
+            <thead><tr><th>Desde</th><th>Hacia</th><th>Regla</th></tr></thead>
+            <tbody>
+                <tr><td>Internet</td><td>DMZ</td><td>✅ Permitir SOLO puertos necesarios (80, 443)</td></tr>
+                <tr><td>Internet</td><td>Red interna</td><td>❌ BLOQUEADO SIEMPRE</td></tr>
+                <tr><td>DMZ</td><td>Red interna</td><td>⚠️ Muy restringido (solo conexiones específicas)</td></tr>
+                <tr><td>Red interna</td><td>DMZ</td><td>⚠️ Limitado (gestión por administradores)</td></tr>
+                <tr><td>Red interna</td><td>Internet</td><td>✅ Permitir (navegación, correo, etc.)</td></tr>
+                <tr><td>Red interna</td><td>Núcleo</td><td>⚠️ Solo roles autorizados</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ═══════ TAREA 1 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">1</div>
+            <div class="task-title">Diseña el Diagrama de Red de ClínicaVida</div>
+            <div class="time-badge">⏱ 20 min</div>
+        </div>
+
+        <p>Vais a crear un <strong>diagrama de red visual</strong> usando la herramienta online gratuita <strong>draw.io</strong>:</p>
+
+        <div class="info-box important">
+            <div class="label">🌐 Herramienta: draw.io</div>
+            <p>Abrid en el navegador: <strong><a href="https://app.diagrams.net/" target="_blank">https://app.diagrams.net/</a></strong></p>
+            <p>Seleccionad <strong>"Dispositivo"</strong> para guardar en local (no necesitáis cuenta).</p>
+            <p>Cread un archivo nuevo y empezad a dibujar vuestro diagrama.</p>
+        </div>
+
+        <h3>¿Qué debe incluir vuestro diagrama?</h3>
+        <ol>
+            <li><strong>4 zonas claramente diferenciadas</strong> (usad rectángulos de colores):
+                <ul>
+                    <li>🔴 Internet (zona roja)</li>
+                    <li>🟡 DMZ (zona amarilla/naranja)</li>
+                    <li>🔵 Red interna / LAN (zona azul)</li>
+                    <li>🟢 Núcleo / Datos (zona verde)</li>
+                </ul>
+            </li>
+            <li><strong>Firewalls</strong> entre las zonas (usad el icono de firewall o un rectángulo rojo con "FW")</li>
+            <li><strong>Todos los dispositivos de ClínicaVida</strong> colocados en la zona correcta:</li>
+        </ol>
+
+        <table>
+            <thead><tr><th>Dispositivo</th><th>¿En qué zona va?</th><th>Pista</th></tr></thead>
+            <tbody>
+                <tr><td>Servidor web (citas online)</td><td class="fill"><em>Decidid vosotros</em></td><td>Los pacientes acceden desde Internet</td></tr>
+                <tr><td>Servidor principal (historiales)</td><td class="fill"></td><td>Contiene datos críticos de pacientes</td></tr>
+                <tr><td>Servidor de correo</td><td class="fill"></td><td>Recibe emails desde fuera</td></tr>
+                <tr><td>PCs de consultas (×3)</td><td class="fill"></td><td>Solo los usan los dentistas internamente</td></tr>
+                <tr><td>PC de recepción</td><td class="fill"></td><td>Gestión de citas y atención</td></tr>
+                <tr><td>PC de administración</td><td class="fill"></td><td>Nóminas, facturación</td></tr>
+                <tr><td>NAS (copias de seguridad)</td><td class="fill"></td><td>Backups de toda la clínica</td></tr>
+                <tr><td>Impresora multifunción</td><td class="fill"></td><td>Uso interno de empleados</td></tr>
+                <tr><td>WiFi empleados</td><td class="fill"></td><td>Red de trabajo interna</td></tr>
+                <tr><td>WiFi pacientes</td><td class="fill"></td><td>¿Debe estar en la misma red?</td></tr>
+                <tr><td>Tablets presupuestos (×2)</td><td class="fill"></td><td>Las usan los dentistas con pacientes</td></tr>
+            </tbody>
+        </table>
+
+        <div class="info-box tip">
+            <div class="label">💡 Ayuda para draw.io</div>
+            <p>En el panel izquierdo, buscad <strong>"Network"</strong> para encontrar iconos de servidores, PCs, firewalls, routers y nubes. Usad <strong>rectángulos con fondo de color semitransparente</strong> para dibujar las zonas. Conectadlos con flechas.</p>
+        </div>
+
+        <p>Cuando terminéis el diagrama:</p>
+        <ol>
+            <li>Haced una <strong>captura de pantalla</strong> del diagrama completo</li>
+            <li>Pegadla en vuestro documento Word</li>
+            <li>Debajo, escribid un <strong>párrafo de 3-4 líneas</strong> explicando por qué habéis puesto cada dispositivo donde está</li>
+        </ol>
+    </div>
+
+    <!-- ═══════ TAREA 2 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">2</div>
+            <div class="task-title">Configura las Reglas del Firewall</div>
+            <div class="time-badge">⏱ 15 min</div>
+        </div>
+
+        <p>Ahora decidid qué <strong>puertos abrís, cerráis o restringís</strong> en el firewall de ClínicaVida. Copiad esta tabla y completadla:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Puerto</th>
+                    <th>Protocolo</th>
+                    <th>Servicio</th>
+                    <th>Descripción</th>
+                    <th>Vuestra regla</th>
+                    <th>Justificación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>20/21</strong></td><td>TCP</td><td>FTP</td>
+                    <td>Transferencia de archivos <strong>SIN cifrar</strong></td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>22</strong></td><td>TCP</td><td>SSH</td>
+                    <td>Administración remota <strong>cifrada</strong></td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>23</strong></td><td>TCP</td><td>Telnet</td>
+                    <td>Administración remota <strong>SIN cifrar</strong></td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>25</strong></td><td>TCP</td><td>SMTP</td>
+                    <td>Envío de correo electrónico</td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>53</strong></td><td>UDP/TCP</td><td>DNS</td>
+                    <td>Resolución de nombres de dominio</td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>80</strong></td><td>TCP</td><td>HTTP</td>
+                    <td>Web <strong>sin cifrar</strong></td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>443</strong></td><td>TCP</td><td>HTTPS</td>
+                    <td>Web <strong>cifrada</strong> (TLS)</td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>3389</strong></td><td>TCP</td><td>RDP</td>
+                    <td>Escritorio remoto Windows</td>
+                    <td class="fill"></td><td class="fill"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Usad estas etiquetas para la columna "Vuestra regla":</p>
+        <p>
+            <span class="port-card allow">✅ PERMITIR</span>
+            <span class="port-card block">❌ BLOQUEAR</span>
+            <span class="port-card restrict">⚠️ SOLO ADMIN / VPN</span>
+            <span class="port-card" style="background:#dbeafe;color:#1e3a5f;border:1px solid #3b82f6;">🔄 REDIRIGIR A HTTPS</span>
+        </p>
+
+        <div class="info-box danger">
+            <div class="label">🚨 Regla de oro del firewall</div>
+            <p><strong>"Denegar todo por defecto, permitir solo lo necesario."</strong> Es mejor cerrar todo y abrir solo lo que haga falta, que abrir todo y cerrar lo peligroso (siempre se te olvida algo).</p>
+        </div>
+    </div>
+
+    <!-- ═══════ TAREA 3 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">3</div>
+            <div class="task-title">Preguntas de Reflexión</div>
+            <div class="time-badge">⏱ 10 min</div>
+        </div>
+
+        <p>Responded en vuestro documento (3-5 líneas cada una):</p>
+
+        <h3>Pregunta 3.1</h3>
+        <p>¿Qué diferencia hay entre un firewall <strong>stateless</strong> y uno <strong>stateful</strong>? ¿Cuál instalaríais en ClínicaVida y por qué?</p>
+
+        <h3>Pregunta 3.2</h3>
+        <p>¿Por qué es importante que el <strong>servidor web de citas online</strong> NO esté en la red interna junto a los PCs de los empleados?</p>
+
+        <h3>Pregunta 3.3</h3>
+        <p>El gerente quiere que los pacientes puedan usar WiFi gratis en la sala de espera. ¿Cómo configurarías esa WiFi para que sea <strong>segura</strong>? (Pista: pensad en las zonas de red).</p>
+
+        <h3>Pregunta 3.4</h3>
+        <p>Un empleado os dice: <em>"¿Por qué no dejamos el puerto de Telnet (23) abierto por si acaso lo necesitamos algún día?"</em>. ¿Qué le responderíais?</p>
+    </div>
+
+    <!-- ENTREGABLE -->
+    <section>
+        <h2><span class="icon" style="background:#fef3c7;color:var(--accent);">📦</span> Entregable de esta estación</h2>
+        <div class="deliverable">
+            <div class="label">✅ Checklist antes de guardar</div>
+            <ul style="list-style:none; padding:0;">
+                <li>☐ Portada con nombres del equipo y fecha</li>
+                <li>☐ Captura del diagrama de red (draw.io) pegada en el documento</li>
+                <li>☐ Tabla de ubicación de dispositivos por zona completada</li>
+                <li>☐ Párrafo explicando las decisiones de ubicación</li>
+                <li>☐ Tabla de reglas del firewall completada con justificaciones</li>
+                <li>☐ Respuesta a las 4 preguntas de reflexión (3-5 líneas cada una)</li>
+            </ul>
+        </div>
+        <p>Guardad el archivo como: <strong><code>Estacion3_Equipo[X].docx</code></strong></p>
+    </section>
+
+</div>
+
+<footer>
+    <p>Estación 3 de 4 · Práctica Simulada ClínicaVida · UF1353 Ciberseguridad</p>
+</footer>
+
+</body>
+</html>

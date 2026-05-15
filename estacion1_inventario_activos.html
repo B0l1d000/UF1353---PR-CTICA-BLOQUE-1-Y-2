@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación 1 — Inventario de Activos y Triada CIA · ClínicaVida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #10b981;
+            --accent-dark: #059669;
+            --accent-light: #ecfdf5;
+            --dark: #0f172a;
+            --dark2: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--dark); line-height: 1.7; font-size: 15px; }
+        @media print {
+            body { background: white; font-size: 11px; line-height: 1.5; }
+            .hero { padding: 30px 20px !important; }
+            section { padding: 18px !important; margin-bottom: 14px !important; break-inside: avoid; }
+            .no-print { display: none !important; }
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+            color: white; padding: 50px 40px; text-align: center;
+        }
+        .hero .badge {
+            display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px; padding: 5px 18px; font-size: 12px; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px;
+        }
+        .hero h1 { font-size: 2.4rem; font-weight: 900; margin-bottom: 8px; }
+        .hero .subtitle { font-size: 1.05rem; opacity: 0.85; max-width: 550px; margin: 0 auto; }
+        .hero-meta { display: flex; justify-content: center; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+        .hero-meta .item { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 8px 20px; font-size: 13px; }
+
+        .container { max-width: 880px; margin: 0 auto; padding: 36px 24px; }
+        section {
+            background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.04);
+        }
+        section h2 {
+            font-size: 1.4rem; font-weight: 800; margin-bottom: 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        section h2 .icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+        }
+        h3 { font-size: 1.05rem; font-weight: 700; margin: 20px 0 10px; color: var(--dark2); }
+
+        .scenario {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-left: 5px solid var(--accent);
+            border-radius: 12px; padding: 22px 26px; margin: 20px 0;
+        }
+        .scenario .label { font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); margin-bottom: 6px; }
+        .scenario p { color: #065f46; font-style: italic; }
+
+        .task-box {
+            border: 2px solid var(--accent); border-radius: 14px; padding: 24px 28px; margin: 24px 0;
+            background: linear-gradient(135deg, #f0fdf4, #ffffff);
+        }
+        .task-box .task-header {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+        }
+        .task-box .task-num {
+            background: var(--accent); color: white; width: 32px; height: 32px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 14px; flex-shrink: 0;
+        }
+        .task-box .task-title { font-weight: 800; font-size: 1.1rem; color: var(--accent-dark); }
+        .task-box .time-badge {
+            background: var(--accent-light); color: var(--accent-dark); padding: 3px 12px;
+            border-radius: 20px; font-size: 12px; font-weight: 700; margin-left: auto;
+        }
+
+        .info-box { border-radius: 10px; padding: 16px 20px; margin: 16px 0; font-size: 14px; }
+        .info-box.tip { background: #ecfdf5; border-left: 4px solid var(--accent); color: #065f46; }
+        .info-box.warn { background: #fef3c7; border-left: 4px solid var(--orange); color: #92400e; }
+        .info-box.important { background: #ede9fe; border-left: 4px solid var(--purple); color: #5b21b6; }
+        .info-box.danger { background: #fee2e2; border-left: 4px solid var(--red); color: #991b1b; }
+        .info-box .label { font-weight: 700; margin-bottom: 4px; }
+
+        table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+        th {
+            background: var(--dark); color: white; padding: 10px 14px; text-align: left;
+            font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        th:first-child { border-radius: 8px 0 0 0; }
+        th:last-child { border-radius: 0 8px 0 0; }
+        td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; }
+        tr:nth-child(even) td { background: #f8fafc; }
+        td.fill { background: #fef9c3 !important; min-width: 100px; }
+
+        .deliverable {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 2px solid var(--accent);
+            border-radius: 12px; padding: 20px 24px; margin: 20px 0;
+        }
+        .deliverable .label { font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #065f46; margin-bottom: 8px; }
+
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps li {
+            counter-increment: step; padding: 10px 0 10px 44px; position: relative;
+            border-left: 2px solid #d1fae5; margin-left: 16px;
+        }
+        .steps li::before {
+            content: counter(step); position: absolute; left: -14px; top: 10px;
+            width: 28px; height: 28px; background: var(--accent); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px;
+        }
+        .steps li:last-child { border-left: none; }
+
+        ul, ol { padding-left: 20px; margin: 8px 0; }
+        li { margin: 5px 0; }
+        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        strong { color: var(--dark); }
+
+        footer { text-align: center; padding: 30px 20px; color: var(--gray); font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="badge">Estación 1 de 4</div>
+    <h1>🟢 Inventario de Activos<br>y Triada CIA</h1>
+    <p class="subtitle">Identifica todo lo que hay que proteger en ClínicaVida y evalúa los riesgos</p>
+    <div class="hero-meta">
+        <div class="item">⏱ <strong>45 minutos</strong></div>
+        <div class="item">📄 Entregable: <strong>Estacion1_Equipo[X].docx</strong></div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- CONTEXTO -->
+    <section>
+        <h2><span class="icon" style="background:#ecfdf5;color:var(--accent);">🎯</span> Objetivo de esta estación</h2>
+        <p>El primer paso de <strong>cualquier auditoría de seguridad</strong> es saber <em>qué tenemos</em> y <em>qué valor tiene</em>. No puedes proteger lo que no conoces. En esta estación vais a:</p>
+        <ol>
+            <li>Hacer un <strong>inventario completo</strong> de los activos de ClínicaVida</li>
+            <li>Clasificar cada activo según su <strong>criticidad</strong></li>
+            <li>Aplicar la <strong>Triada CIA</strong> para evaluar qué pasaría si cada activo fuera comprometido</li>
+            <li>Realizar un <strong>análisis de riesgos básico</strong></li>
+        </ol>
+
+        <div class="scenario">
+            <div class="label">📋 El gerente os dice:</div>
+            <p>"No tenemos ningún documento de seguridad. No sé qué tenemos, ni qué es más importante. He oído que la ley nos obliga a proteger los datos de los pacientes pero no sé por dónde empezar. ¿Podéis hacer un inventario de todo y decirme qué es lo que más me debería preocupar?"</p>
+        </div>
+    </section>
+
+    <!-- RECORDATORIO TEÓRICO -->
+    <section>
+        <h2><span class="icon" style="background:#fef3c7;color:var(--orange);">📚</span> Recordatorio Teórico Rápido</h2>
+
+        <h3>La Triada CIA</h3>
+        <table>
+            <thead>
+                <tr><th>Pilar</th><th>Significado</th><th>Pregunta clave</th><th>Ejemplo en una clínica</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>C</strong> — Confidencialidad</td>
+                    <td>Solo los autorizados pueden ver la información</td>
+                    <td>¿Quién NO debería ver esto?</td>
+                    <td>Un paciente no debería ver el historial de otro paciente</td>
+                </tr>
+                <tr>
+                    <td><strong>I</strong> — Integridad</td>
+                    <td>La información no ha sido alterada sin permiso</td>
+                    <td>¿Qué pasa si alguien modifica esto?</td>
+                    <td>Si alguien altera una receta médica, puede ser peligroso</td>
+                </tr>
+                <tr>
+                    <td><strong>D</strong> — Disponibilidad</td>
+                    <td>Los sistemas están accesibles cuando se necesitan</td>
+                    <td>¿Qué pasa si esto deja de funcionar?</td>
+                    <td>Si el servidor se cae, no se puede atender a los pacientes</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Tipos de activos</h3>
+        <table>
+            <thead>
+                <tr><th>Tipo</th><th>Descripción</th><th>Ejemplos</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>🖥️ Hardware</td><td>Equipos físicos</td><td>Servidores, PCs, routers, impresoras</td></tr>
+                <tr><td>💾 Software</td><td>Programas y aplicaciones</td><td>Sistema operativo, software de gestión, antivirus</td></tr>
+                <tr><td>📊 Datos</td><td>Información almacenada</td><td>Historiales, radiografías, nóminas, emails</td></tr>
+                <tr><td>🌐 Red</td><td>Infraestructura de comunicaciones</td><td>WiFi, cableado, firewall, router</td></tr>
+                <tr><td>👥 Personas</td><td>Usuarios del sistema</td><td>Empleados, pacientes con acceso, proveedores</td></tr>
+                <tr><td>🏢 Instalaciones</td><td>Espacios físicos</td><td>Sala de servidores, despachos</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ═══════ TAREA 1 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">1</div>
+            <div class="task-title">Inventario de Activos de ClínicaVida</div>
+            <div class="time-badge">⏱ 15 min</div>
+        </div>
+
+        <p>Abrid un <strong>documento Word nuevo</strong> y cread una portada con:</p>
+        <ul>
+            <li>Título: <em>"Estación 1 — Inventario de Activos y Triada CIA"</em></li>
+            <li>Nombres de los miembros del equipo</li>
+            <li>Nombre del equipo (A, B o C) y fecha</li>
+        </ul>
+
+        <p>Después, copiad y completad la siguiente <strong>tabla de inventario</strong>. Debéis identificar <strong>al menos 12 activos</strong> de ClínicaVida (revisad la descripción de la clínica en la guía principal):</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Nombre del activo</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Criticidad</th>
+                    <th>Justificación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td class="fill"><em>Ej: Servidor principal</em></td>
+                    <td class="fill"><em>Hardware</em></td>
+                    <td class="fill"><em>Almacena historiales clínicos y software de gestión</em></td>
+                    <td class="fill"><em>🔴 Crítica</em></td>
+                    <td class="fill"><em>Sin él no se puede atender a pacientes ni acceder a datos</em></td>
+                </tr>
+                <tr><td>2</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>3</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>4</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>5</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>6</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>7</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>8</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>9</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>10</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>11</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>12</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+            </tbody>
+        </table>
+
+        <div class="info-box tip">
+            <div class="label">💡 Pista</div>
+            <p>No olvidéis los activos que <em>no son físicos</em>: los datos de pacientes, el software de gestión dental, las copias de seguridad en el NAS, los correos electrónicos, las nóminas de empleados... ¡Los datos suelen ser el activo MÁS crítico!</p>
+        </div>
+
+        <p><strong>Escala de criticidad</strong>: 🔴 Crítica · 🟠 Alta · 🟡 Media · 🟢 Baja</p>
+    </div>
+
+    <!-- ═══════ TAREA 2 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">2</div>
+            <div class="task-title">Mapa de Impacto — Triada CIA</div>
+            <div class="time-badge">⏱ 15 min</div>
+        </div>
+
+        <p>Ahora vais a evaluar, para cada activo, <strong>qué pilares de la Triada CIA se verían afectados</strong> si ese activo fuera comprometido. Copiad esta tabla en vuestro documento y completadla:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Activo</th>
+                    <th>¿Afecta a Confidencialidad?</th>
+                    <th>¿Afecta a Integridad?</th>
+                    <th>¿Afecta a Disponibilidad?</th>
+                    <th>Pilar MÁS afectado</th>
+                    <th>Explicación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><em>Ej: Historiales clínicos</em></td>
+                    <td><em>🔴 SÍ — datos privados de pacientes</em></td>
+                    <td><em>🔴 SÍ — si se modifican diagnósticos</em></td>
+                    <td><em>🟡 SÍ — si no están accesibles</em></td>
+                    <td><em>C (Confidencialidad)</em></td>
+                    <td><em>Son datos de salud protegidos por RGPD. Una filtración es gravísima.</em></td>
+                </tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+            </tbody>
+        </table>
+
+        <div class="info-box important">
+            <div class="label">🔍 Pregunta para reflexionar</div>
+            <p>¿Hay algún activo donde los TRES pilares (C, I y D) se vean afectados con criticidad alta? Si es así, ese es probablemente el activo que más urge proteger. Escribid un párrafo en vuestro documento explicando <strong>cuál es y por qué</strong>.</p>
+        </div>
+    </div>
+
+    <!-- ═══════ TAREA 3 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">3</div>
+            <div class="task-title">Análisis de Riesgos Básico</div>
+            <div class="time-badge">⏱ 10 min</div>
+        </div>
+
+        <p>Para los <strong>5 activos más críticos</strong> que habéis identificado, evaluad las amenazas que les afectan. Copiad y completad esta tabla:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Activo</th>
+                    <th>Amenaza posible</th>
+                    <th>Probabilidad</th>
+                    <th>Impacto</th>
+                    <th>Nivel de riesgo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><em>Ej: Servidor principal</em></td>
+                    <td><em>Ransomware que cifra los datos</em></td>
+                    <td><em>Media</em></td>
+                    <td><em>Crítico</em></td>
+                    <td><em>🔴 MUY ALTO</em></td>
+                </tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+            </tbody>
+        </table>
+
+        <div class="info-box warn">
+            <div class="label">📐 Cómo calcular el nivel de riesgo</div>
+            <p><strong>Riesgo = Probabilidad × Impacto</strong></p>
+            <table>
+                <thead><tr><th></th><th>Impacto Bajo</th><th>Impacto Medio</th><th>Impacto Alto</th><th>Impacto Crítico</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Probabilidad Alta</strong></td><td>🟡 Medio</td><td>🟠 Alto</td><td>🔴 Muy alto</td><td>🔴 Muy alto</td></tr>
+                    <tr><td><strong>Probabilidad Media</strong></td><td>🟢 Bajo</td><td>🟡 Medio</td><td>🟠 Alto</td><td>🔴 Muy alto</td></tr>
+                    <tr><td><strong>Probabilidad Baja</strong></td><td>🟢 Bajo</td><td>🟢 Bajo</td><td>🟡 Medio</td><td>🟠 Alto</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ═══════ TAREA 4 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">4</div>
+            <div class="task-title">Conclusión y Recomendación al Gerente</div>
+            <div class="time-badge">⏱ 5 min</div>
+        </div>
+
+        <p>Para terminar, escribid un <strong>párrafo de 5-8 líneas</strong> dirigido al gerente de ClínicaVida respondiendo a estas preguntas:</p>
+
+        <ol>
+            <li>¿Cuál es el <strong>activo más crítico</strong> de la clínica y por qué?</li>
+            <li>¿Cuál es la <strong>amenaza más probable</strong> que debería preocuparle?</li>
+            <li>¿Qué <strong>3 medidas urgentes</strong> recomendaríais tomar primero?</li>
+        </ol>
+
+        <div class="info-box tip">
+            <div class="label">✍️ Formato sugerido</div>
+            <p>Escribidlo como si fuera un <strong>email profesional</strong> al gerente: <em>"Estimado gerente, tras la auditoría inicial de activos de ClínicaVida, nuestro equipo ha identificado que..."</em></p>
+        </div>
+    </div>
+
+    <!-- ENTREGABLE -->
+    <section>
+        <h2><span class="icon" style="background:#ecfdf5;color:var(--accent);">📦</span> Entregable de esta estación</h2>
+        <div class="deliverable">
+            <div class="label">✅ Checklist antes de guardar</div>
+            <ul style="list-style:none; padding:0;">
+                <li>☐ Portada con nombres del equipo y fecha</li>
+                <li>☐ Tabla 1: Inventario de activos (mínimo 12 activos) con criticidad justificada</li>
+                <li>☐ Tabla 2: Mapa de impacto Triada CIA (mínimo 5 activos)</li>
+                <li>☐ Párrafo: ¿Cuál es el activo más crítico de los tres pilares?</li>
+                <li>☐ Tabla 3: Análisis de riesgos (5 activos más críticos)</li>
+                <li>☐ Párrafo final: Email al gerente con conclusiones y 3 medidas urgentes</li>
+            </ul>
+        </div>
+        <p>Guardad el archivo como: <strong><code>Estacion1_Equipo[X].docx</code></strong></p>
+    </section>
+
+</div>
+
+<footer>
+    <p>Estación 1 de 4 · Práctica Simulada ClínicaVida · UF1353 Ciberseguridad</p>
+</footer>
+
+</body>
+</html>

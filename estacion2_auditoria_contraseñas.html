@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación 2 — Auditoría de Contraseñas · ClínicaVida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #3b82f6; --accent-dark: #2563eb; --accent-light: #eff6ff;
+            --dark: #0f172a; --dark2: #1e293b; --gray: #64748b; --light: #f1f5f9; --white: #fff;
+            --green: #10b981; --orange: #f59e0b; --red: #ef4444; --purple: #8b5cf6;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:var(--light); color:var(--dark); line-height:1.7; font-size:15px; }
+        @media print { body { background:white; font-size:11px; line-height:1.5; } .hero { padding:30px 20px!important; } section { padding:18px!important; margin-bottom:14px!important; break-inside:avoid; } }
+
+        .hero { background:linear-gradient(135deg,#2563eb 0%,#3b82f6 50%,#60a5fa 100%); color:white; padding:50px 40px; text-align:center; }
+        .hero .badge { display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:50px; padding:5px 18px; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; }
+        .hero h1 { font-size:2.4rem; font-weight:900; margin-bottom:8px; }
+        .hero .subtitle { font-size:1.05rem; opacity:.85; max-width:550px; margin:0 auto; }
+        .hero-meta { display:flex; justify-content:center; gap:24px; margin-top:20px; flex-wrap:wrap; }
+        .hero-meta .item { background:rgba(255,255,255,.15); border-radius:10px; padding:8px 20px; font-size:13px; }
+
+        .container { max-width:880px; margin:0 auto; padding:36px 24px; }
+        section { background:var(--white); border-radius:16px; padding:32px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,.06); border:1px solid rgba(0,0,0,.04); }
+        section h2 { font-size:1.4rem; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+        section h2 .icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+        h3 { font-size:1.05rem; font-weight:700; margin:20px 0 10px; color:var(--dark2); }
+
+        .scenario { background:linear-gradient(135deg,#eff6ff,#dbeafe); border-left:5px solid var(--accent); border-radius:12px; padding:22px 26px; margin:20px 0; }
+        .scenario .label { font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--accent-dark); margin-bottom:6px; }
+        .scenario p { color:#1e3a5f; font-style:italic; }
+
+        .task-box { border:2px solid var(--accent); border-radius:14px; padding:24px 28px; margin:24px 0; background:linear-gradient(135deg,#eff6ff,#fff); }
+        .task-box .task-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+        .task-box .task-num { background:var(--accent); color:white; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex-shrink:0; }
+        .task-box .task-title { font-weight:800; font-size:1.1rem; color:var(--accent-dark); }
+        .task-box .time-badge { background:var(--accent-light); color:var(--accent-dark); padding:3px 12px; border-radius:20px; font-size:12px; font-weight:700; margin-left:auto; }
+
+        .info-box { border-radius:10px; padding:16px 20px; margin:16px 0; font-size:14px; }
+        .info-box.tip { background:#ecfdf5; border-left:4px solid var(--green); color:#065f46; }
+        .info-box.warn { background:#fef3c7; border-left:4px solid var(--orange); color:#92400e; }
+        .info-box.important { background:#ede9fe; border-left:4px solid var(--purple); color:#5b21b6; }
+        .info-box.danger { background:#fee2e2; border-left:4px solid var(--red); color:#991b1b; }
+        .info-box .label { font-weight:700; margin-bottom:4px; }
+
+        table { width:100%; border-collapse:collapse; margin:14px 0; font-size:13px; }
+        th { background:var(--dark); color:white; padding:10px 14px; text-align:left; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+        th:first-child { border-radius:8px 0 0 0; } th:last-child { border-radius:0 8px 0 0; }
+        td { padding:10px 14px; border-bottom:1px solid #e2e8f0; }
+        tr:nth-child(even) td { background:#f8fafc; }
+        td.fill { background:#fef9c3!important; min-width:80px; }
+
+        .password-display {
+            font-family: 'Courier New', monospace; font-size: 16px; font-weight: 700;
+            background: #1e293b; color: #f59e0b; padding: 6px 14px; border-radius: 6px;
+            display: inline-block; letter-spacing: 1px;
+        }
+
+        .semaphore { display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+        .semaphore.red { background:#fee2e2; color:#991b1b; }
+        .semaphore.yellow { background:#fef3c7; color:#92400e; }
+        .semaphore.green { background:#d1fae5; color:#065f46; }
+
+        .deliverable { background:linear-gradient(135deg,#eff6ff,#dbeafe); border:2px solid var(--accent); border-radius:12px; padding:20px 24px; margin:20px 0; }
+        .deliverable .label { font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#1e3a5f; margin-bottom:8px; }
+
+        ul, ol { padding-left:20px; margin:8px 0; }
+        li { margin:5px 0; }
+        code { background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:13px; }
+        footer { text-align:center; padding:30px 20px; color:var(--gray); font-size:12px; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="badge">Estación 2 de 4</div>
+    <h1>🔵 Auditoría de<br>Contraseñas</h1>
+    <p class="subtitle">Evalúa las contraseñas de ClínicaVida, diseña una política y asigna roles de acceso</p>
+    <div class="hero-meta">
+        <div class="item">⏱ <strong>45 minutos</strong></div>
+        <div class="item">📄 Entregable: <strong>Estacion2_Equipo[X].docx</strong></div>
+    </div>
+</div>
+
+<div class="container">
+
+    <section>
+        <h2><span class="icon" style="background:#eff6ff;color:var(--accent);">🎯</span> Objetivo de esta estación</h2>
+        <p>Las contraseñas débiles son la <strong>causa número 1 de brechas de seguridad</strong>. En esta estación vais a:</p>
+        <ol>
+            <li><strong>Auditar</strong> las contraseñas actuales de los empleados de ClínicaVida</li>
+            <li>Comprobar su seguridad con una <strong>herramienta online</strong> y documentarlo con capturas</li>
+            <li><strong>Redactar</strong> una política de contraseñas profesional para la clínica</li>
+            <li><strong>Diseñar</strong> una tabla de roles y permisos aplicando el principio de mínimo privilegio</li>
+        </ol>
+
+        <div class="scenario">
+            <div class="label">📋 El gerente os dice:</div>
+            <p>"Os voy a enseñar una cosa que me da un poco de vergüenza... Aquí están las contraseñas de todo el equipo. Están apuntadas en un post-it en la recepción para que nadie se las olvide. ¿Está bien eso, verdad?"</p>
+        </div>
+    </section>
+
+    <!-- ═══════ TAREA 1 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">1</div>
+            <div class="task-title">Evaluar las Contraseñas de los Empleados</div>
+            <div class="time-badge">⏱ 15 min</div>
+        </div>
+
+        <p>Estas son las contraseñas actuales de ClínicaVida. Analizad cada una:</p>
+
+        <table>
+            <thead>
+                <tr><th>Empleado</th><th>Puesto</th><th>Usuario</th><th>Contraseña actual</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Dra. García</td><td>Dentista</td><td>dgarcia</td><td><span class="password-display">clinica2024</span></td></tr>
+                <tr><td>Carlos</td><td>Recepcionista</td><td>carlos</td><td><span class="password-display">1234</span></td></tr>
+                <tr><td>Ana</td><td>Higienista</td><td>ana</td><td><span class="password-display">ana</span></td></tr>
+                <tr><td>Dr. López</td><td>Dentista</td><td>dlopez</td><td><span class="password-display">DrLopez</span></td></tr>
+                <tr><td>Marta</td><td>Administrativa</td><td>marta</td><td><span class="password-display">M@rta.Admin.2024!</span></td></tr>
+                <tr><td>Gerente</td><td>Gerente</td><td>gerente</td><td><span class="password-display">password</span></td></tr>
+                <tr><td>Cuenta compartida</td><td>Todos</td><td>todos</td><td><span class="password-display">clinicavida</span></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Paso 1: Evaluación con herramienta online</h3>
+        <p>Abrid en el navegador la web:</p>
+        <div class="info-box important">
+            <div class="label">🌐 Herramienta de comprobación</div>
+            <p>Visitad <strong><a href="https://www.security.org/how-secure-is-my-password/" target="_blank">https://www.security.org/how-secure-is-my-password/</a></strong></p>
+            <p>Introducid cada contraseña y comprobad <strong>cuánto tardaría un atacante en romperla</strong>.</p>
+            <p>⚠️ <strong>Importante</strong>: esta web es solo de comprobación, no envía datos a ningún servidor. Pero en la vida real, <em>nunca</em> introduciríais contraseñas reales en webs desconocidas.</p>
+        </div>
+
+        <h3>Paso 2: Tabla de evaluación</h3>
+        <p>Para cada contraseña, haced una <strong>captura de pantalla</strong> del resultado de la web y añadidla a vuestro documento. Después, completad esta tabla:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Contraseña</th>
+                    <th>Tiempo para romperla</th>
+                    <th>Semáforo</th>
+                    <th>Problemas detectados</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><em>Ej: Carlos</em></td>
+                    <td><em>1234</em></td>
+                    <td class="fill"><em>Ej: "Instantáneo"</em></td>
+                    <td><span class="semaphore red">🔴 MUY DÉBIL</span></td>
+                    <td class="fill"><em>Solo 4 números, sin letras ni símbolos, predecible</em></td>
+                </tr>
+                <tr><td>Dra. García</td><td>clinica2024</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>Ana</td><td>ana</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>Dr. López</td><td>DrLopez</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>Marta</td><td>M@rta.Admin.2024!</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>Gerente</td><td>password</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+                <tr><td>Todos</td><td>clinicavida</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+            </tbody>
+        </table>
+
+        <p><strong>Semáforo</strong>: <span class="semaphore red">🔴 MUY DÉBIL</span> <span class="semaphore yellow">🟡 DÉBIL</span> <span class="semaphore green">🟢 FUERTE</span></p>
+
+        <div class="info-box warn">
+            <div class="label">⚠️ Pregunta trampa</div>
+            <p>¿Qué problema tiene la "cuenta compartida" (<code>todos</code> / <code>clinicavida</code>) <strong>además</strong> de que la contraseña sea débil? Escribid la respuesta en vuestro documento.</p>
+        </div>
+
+        <div class="info-box tip">
+            <div class="label">📸 Cómo hacer capturas de pantalla</div>
+            <p>Pulsad <strong>Windows + Shift + S</strong> para capturar una zona de la pantalla. Después, pegadla en vuestro documento Word con <strong>Ctrl + V</strong>. Debajo de cada captura, escribid una línea explicando qué muestra.</p>
+        </div>
+    </div>
+
+    <!-- ═══════ TAREA 2 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">2</div>
+            <div class="task-title">Política de Contraseñas de ClínicaVida</div>
+            <div class="time-badge">⏱ 10 min</div>
+        </div>
+
+        <p>Redactad la <strong>"Política de Contraseñas de ClínicaVida"</strong> en vuestro documento. Debe incluir <strong>al menos 6 reglas</strong> claras y concretas. Usad este formato:</p>
+
+        <div class="info-box important">
+            <div class="label">📜 Formato sugerido</div>
+            <p><strong>POLÍTICA DE CONTRASEÑAS — CLÍNICAVIDA</strong><br>
+            <em>Versión 1.0 · [Fecha] · Elaborada por: Equipo [X]</em></p>
+            <p>Regla 1: ...<br>Regla 2: ...<br>(...etc.)</p>
+        </div>
+
+        <p>Recordad los elementos clave de una buena política:</p>
+        <table>
+            <thead><tr><th>Elemento</th><th>Recomendación estándar</th></tr></thead>
+            <tbody>
+                <tr><td>Longitud mínima</td><td>12 caracteres (mejor 16+)</td></tr>
+                <tr><td>Complejidad</td><td>Mezcla obligatoria de mayúsculas, minúsculas, números y símbolos</td></tr>
+                <tr><td>Caducidad</td><td>Cambio obligatorio cada 90 días</td></tr>
+                <tr><td>Historial</td><td>No reutilizar las últimas 10 contraseñas</td></tr>
+                <tr><td>Bloqueo</td><td>Bloqueo de cuenta tras 5 intentos fallidos</td></tr>
+                <tr><td>Cuentas nuevas</td><td>Contraseña temporal + cambio obligatorio en primer acceso</td></tr>
+                <tr><td>Cuentas compartidas</td><td>PROHIBIDAS</td></tr>
+                <tr><td>2FA</td><td>Obligatoria para acceso a datos de pacientes</td></tr>
+            </tbody>
+        </table>
+
+        <p>Al final, inventad <strong>una contraseña de ejemplo</strong> que cumpla TODAS vuestras reglas y explicad por qué es segura.</p>
+    </div>
+
+    <!-- ═══════ TAREA 3 ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">3</div>
+            <div class="task-title">Tabla de Roles y Permisos — Mínimo Privilegio</div>
+            <div class="time-badge">⏱ 15 min</div>
+        </div>
+
+        <p>El principio de <strong>mínimo privilegio</strong> dice que cada usuario solo debe tener acceso a lo que necesita para su trabajo, y nada más. Diseñad la tabla de permisos para ClínicaVida:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Acción / Recurso</th>
+                    <th>Gerente</th>
+                    <th>Dentista</th>
+                    <th>Higienista</th>
+                    <th>Recepcionista</th>
+                    <th>Administrativa</th>
+                    <th>Técnico TI externo</th>
+                    <th>Paciente (WiFi)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Ver historiales de pacientes</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Modificar historiales</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Ver radiografías</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Gestionar citas</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Ver nóminas</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Instalar software</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Acceso a la red WiFi interna</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Acceso remoto (VPN)</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Acceso a copias de seguridad</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+                <tr>
+                    <td><strong>Acceso a facturación</strong></td>
+                    <td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Usad estos símbolos en vuestra tabla: <strong>✅ SÍ</strong> · <strong>❌ NO</strong> · <strong>👁️ Solo lectura</strong> · <strong>⚠️ Con aprobación</strong></p>
+
+        <div class="info-box important">
+            <div class="label">🔍 Pregunta clave</div>
+            <p>¿El paciente debería tener acceso a la misma red WiFi que los empleados? ¿Por qué no? Escribid la respuesta en vuestro documento (2-3 líneas).</p>
+        </div>
+
+        <h3>¿Qué modelo de control de acceso usaríais?</h3>
+        <p>Elegid uno de los tres modelos y justificad por qué es el más adecuado para ClínicaVida:</p>
+        <table>
+            <thead><tr><th>Modelo</th><th>¿Cómo funciona?</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+                <tr><td><strong>DAC</strong> (Discretionary)</td><td>El propietario del recurso decide quién accede</td><td>Carpetas compartidas en red</td></tr>
+                <tr><td><strong>MAC</strong> (Mandatory)</td><td>El sistema decide según etiquetas de seguridad</td><td>Sistemas militares</td></tr>
+                <tr><td><strong>RBAC</strong> (Role-Based)</td><td>Permisos asignados a roles, no a personas</td><td>Empresas: el rol "dentista" accede a historiales</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ═══════ TAREA 4 (BONUS) ═══════ -->
+    <div class="task-box">
+        <div class="task-header">
+            <div class="task-num">⭐</div>
+            <div class="task-title">Bonus: Investiga un Gestor de Contraseñas</div>
+            <div class="time-badge">⏱ Si os sobra tiempo</div>
+        </div>
+
+        <p>Si os queda tiempo, buscad en Internet uno de estos gestores de contraseñas y haced una captura de su web:</p>
+        <ul>
+            <li><strong>Bitwarden</strong> (<a href="https://bitwarden.com" target="_blank">bitwarden.com</a>) — Gratuito, open source</li>
+            <li><strong>KeePassXC</strong> (<a href="https://keepassxc.org" target="_blank">keepassxc.org</a>) — 100% local, sin nube</li>
+        </ul>
+        <p>En el documento, pegad la captura y escribid: ¿cuál recomendaríais para ClínicaVida y por qué?</p>
+    </div>
+
+    <!-- ENTREGABLE -->
+    <section>
+        <h2><span class="icon" style="background:#eff6ff;color:var(--accent);">📦</span> Entregable de esta estación</h2>
+        <div class="deliverable">
+            <div class="label">✅ Checklist antes de guardar</div>
+            <ul style="list-style:none; padding:0;">
+                <li>☐ Portada con nombres del equipo y fecha</li>
+                <li>☐ Tabla de evaluación de contraseñas completada con semáforo</li>
+                <li>☐ Capturas de pantalla de la herramienta online (una por contraseña) con explicación</li>
+                <li>☐ Respuesta sobre el problema de la cuenta compartida</li>
+                <li>☐ Política de Contraseñas redactada (mínimo 6 reglas)</li>
+                <li>☐ Ejemplo de contraseña segura que cumple todas las reglas</li>
+                <li>☐ Tabla de roles y permisos completada</li>
+                <li>☐ Respuesta: ¿por qué separar la WiFi de pacientes y empleados?</li>
+                <li>☐ Modelo de control de acceso elegido con justificación</li>
+                <li>☐ (Bonus) Captura de gestor de contraseñas + recomendación</li>
+            </ul>
+        </div>
+        <p>Guardad el archivo como: <strong><code>Estacion2_Equipo[X].docx</code></strong></p>
+    </section>
+
+</div>
+
+<footer>
+    <p>Estación 2 de 4 · Práctica Simulada ClínicaVida · UF1353 Ciberseguridad</p>
+</footer>
+
+</body>
+</html>
